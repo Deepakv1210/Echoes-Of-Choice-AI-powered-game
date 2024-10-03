@@ -3,8 +3,11 @@ import Button from './components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
 
 const Game = () => {
-  const [story, setStory] = useState("You find yourself at the entrance of a dark cave. What do you do?");
-  const [choices, setChoices] = useState(["Enter the cave", "Look around", "Leave"]);
+  const initialStory = "You find yourself at the entrance of a dark cave. What do you do?";
+  const initialChoices = ["Enter the cave", "Look around", "Leave"];
+
+  const [story, setStory] = useState(initialStory);
+  const [choices, setChoices] = useState(initialChoices);
   const [gameOver, setGameOver] = useState(false);
 
   const handleChoice = async (choice) => {
@@ -23,39 +26,34 @@ const Game = () => {
 
       const data = await response.json();
       const newStory = data.new_story;
+      const newChoices = data.new_choices;
 
       setStory(newStory);
-      // Update choices based on new story (we need to implement logic to extract new choices)
-      setChoices(["Option A", "Option B"]);
+      setChoices(newChoices);
     } catch (error) {
-      console.error('Failed to fetch:', error);
+      console.error('Error:', error);
     }
   };
 
   const handleEndGame = () => {
+    setStory(initialStory);
+    setChoices(initialChoices);
     setGameOver(true);
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-10">
+    <Card>
       <CardHeader>
-        <CardTitle>{gameOver ? "Game Over" : story}</CardTitle>
+        <CardTitle>Interactive Story Game</CardTitle>
       </CardHeader>
       <CardContent>
-        {gameOver ? (
-          <p>Thank you for playing!</p>
-        ) : (
-          <>
-            {choices.map((choice, index) => (
-              <Button key={index} onClick={() => handleChoice(choice)}>
-                {choice}
-              </Button>
-            ))}
-            <Button onClick={handleEndGame} className="mt-4">
-              End Game
-            </Button>
-          </>
-        )}
+        <p>{story}</p>
+        {choices.map((choice, index) => (
+          <Button key={index} onClick={() => handleChoice(choice)}>
+            {choice}
+          </Button>
+        ))}
+        <Button onClick={handleEndGame}>End Game</Button>
       </CardContent>
     </Card>
   );
