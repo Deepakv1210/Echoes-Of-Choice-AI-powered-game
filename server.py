@@ -19,7 +19,8 @@ def generate():
     choice = data['choice']
 
     # Generate the next part of the story
-    input_text = f"{story} {choice}\n\nPlease provide three options for the next part of the story in the following format only '1.', '2.', '3.'."
+    input_text = f'''{story} {choice}\n\nPlease provide three options for the next part of the story in the format '1.', '2.', '3.'.
+    Each option should have a short description followed by a colon and the actual choice. For example, '1. Go to the forest: You decide to explore the forest.'''
     try:
         new_story = ollama.generate(model='llama3.2', prompt=input_text)
         response_text = new_story["response"]
