@@ -4,22 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
 
 const Game = () => {
   const initialStory = "You find yourself at the entrance of a dark cave. What do you do?";
-  const initialChoices = ["Enter the cave", "Look around", "Leave"];
+  const initialChoices = [
+    { short_description: "Enter the cave", actual_choice: "You enter the cave." },
+    { short_description: "Look around", actual_choice: "You look around the cave entrance." },
+    { short_description: "Leave", actual_choice: "You decide to leave the cave." }
+  ];
 
-  const [story, setStory] = useState(initialStory);  // Current story
-  const [choices, setChoices] = useState(initialChoices);  // Available choices
+  const [story, setStory] = useState(initialStory);
+  const [choices, setChoices] = useState(initialChoices);
+  const [choiceHistory, setChoiceHistory] = useState([{ story: initialStory, choice: "Initial Story" }]);
   const [gameOver, setGameOver] = useState(false);
-  const [choiceHistory, setChoiceHistory] = useState([{ story: initialStory, choice: null }]);  // Track story and choices
+  const [loading, setLoading] = useState(false); // To handle loading state
 
   const handleChoice = async (choice) => {
+    setLoading(true); // Start loading
     try {
-      // Send the current story and choice to the backend
       const response = await fetch('http://localhost:5000/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ story, choice }),
+        body: JSON.stringify({ story, choice: choice.actual_choice }),
       });
 
       if (!response.ok) {
@@ -27,8 +32,12 @@ const Game = () => {
       }
 
       const data = await response.json();
-      const newStory = data.new_story;  // Get the new story segment
-      const newChoices = data.new_choices;  // Get the new set of choices
+      const newStory = data.new_story || "The story continues, but the next part is shrouded in mystery...";
+      const newChoices = data.new_choices.length > 0 ? data.new_choices : [
+        { short_description: "Continue", actual_choice: "You decide to continue." },
+        { short_description: "Pause", actual_choice: "You take a moment to pause." },
+        { short_description: "End Game", actual_choice: "You choose to end the game." }
+      ];
 
       // Append the new story to the existing story
       setStory(prevStory => `${prevStory}\n\n${newStory}`);
@@ -37,18 +46,26 @@ const Game = () => {
       setChoices(newChoices);
 
       // Update choice history with the new choice and corresponding story segment
-      setChoiceHistory(prevHistory => [...prevHistory, { story: newStory, choice }]);
+      setChoiceHistory(prevHistory => [
+        ...prevHistory,
+        { choice: choice.short_description, story: newStory }
+      ]);
 
     } catch (error) {
       console.error('Error:', error);
+      // Optionally, display an error message to the user
+      alert('An error occurred while generating the story. Please try again.');
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
   const handleEndGame = () => {
-    setGameOver(true);  // End the game
-
-    // Log choice history for the report
-    console.log("Choice History:", choiceHistory);
+    setChoiceHistory(prevHistory => [
+      ...prevHistory,
+      { story } // Add the final state of the story
+    ]);
+    setGameOver(true);
   };
 
   if (gameOver) {
@@ -60,10 +77,12 @@ const Game = () => {
         </CardHeader>
         <CardContent>
           {choiceHistory.map((entry, index) => (
-            <div key={index}>
-              {entry.choice && <p><strong>Your Choice:</strong> {entry.choice}</p>}
+            <div key={index} style={{ marginBottom: '1rem' }}>
+              {entry.choice !== "Initial Story" && entry.choice && (
+                <p><strong>Your Choice:</strong> {entry.choice}</p>
+              )}
               <p><strong>Story Segment:</strong> {entry.story}</p>
-              <hr />
+              {index < choiceHistory.length - 1 && <hr />}
             </div>
           ))}
           <Button onClick={() => window.location.reload()}>Start Over</Button>
@@ -79,12 +98,18 @@ const Game = () => {
       </CardHeader>
       <CardContent>
         <p>{story}</p>
-        {choices.map((choice, index) => (
-          <Button key={index} onClick={() => handleChoice(choice)}>
-            {choice}
-          </Button>
-        ))}
-        <Button onClick={handleEndGame}>End Game</Button>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            {choices.map((choice, index) => (
+              <Button key={index} onClick={() => handleChoice(choice)}>
+                {choice.short_description}
+              </Button>
+            ))}
+            <Button onClick={handleEndGame}>End Game</Button>
+          </>
+        )}
       </CardContent>
     </Card>
   );
