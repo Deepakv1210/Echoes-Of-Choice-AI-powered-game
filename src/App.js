@@ -11,6 +11,7 @@ const Game = () => {
   ];
 
   const [story, setStory] = useState(initialStory);
+  const [latestStorySegment, setLatestStorySegment] = useState(initialStory); // New state for latest story segment
   const [choices, setChoices] = useState(initialChoices);
   const [choiceHistory, setChoiceHistory] = useState([{ story: initialStory, choice: "Initial Story" }]);
   const [gameOver, setGameOver] = useState(false);
@@ -24,7 +25,7 @@ const Game = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ story, choice: choice.actual_choice }),
+        body: JSON.stringify({ story, choice: choice.actual_choice }), // Send full story for generation context
       });
 
       if (!response.ok) {
@@ -39,8 +40,9 @@ const Game = () => {
         { short_description: "End Game", actual_choice: "You choose to end the game." }
       ];
 
-      // Append the new story to the existing story
+      // Append the new story to the existing story for context but only show the latest part
       setStory(prevStory => `${prevStory}\n\n${newStory}`);
+      setLatestStorySegment(newStory); // Update only the latest segment for display
 
       // Update choices with the new ones
       setChoices(newChoices);
@@ -63,11 +65,11 @@ const Game = () => {
   const handleEndGame = () => {
     setChoiceHistory(prevHistory => [
       ...prevHistory,
-      { story } // Add the final state of the story
+      { gameplay: story } 
     ]);
     setGameOver(true);
   };
-
+  
   if (gameOver) {
     // Display report when the game ends
     return (
@@ -81,7 +83,13 @@ const Game = () => {
               {entry.choice !== "Initial Story" && entry.choice && (
                 <p><strong>Your Choice:</strong> {entry.choice}</p>
               )}
-              <p><strong>Story Segment:</strong> {entry.story}</p>
+              {entry.story && (
+                <p><strong>Story Segment:</strong> {entry.story}</p>
+              )}
+              {/* Final gameplay/story output */}
+              {entry.gameplay && (
+                <p><strong>Gameplay:</strong> {entry.gameplay}</p> 
+              )}
               {index < choiceHistory.length - 1 && <hr />}
             </div>
           ))}
@@ -97,7 +105,7 @@ const Game = () => {
         <CardTitle>Interactive Story Game</CardTitle>
       </CardHeader>
       <CardContent>
-        <p>{story}</p>
+        <p>{latestStorySegment}</p> {/* Display only the latest story segment */}
         {loading ? (
           <p>Loading...</p>
         ) : (
