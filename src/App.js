@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from './components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
+import './Game.css';
 
 const Game = () => {
   const initialStory = "You find yourself at the entrance of a dark cave. What do you do?";
@@ -104,21 +105,21 @@ const Game = () => {
       <CardHeader>
         <CardTitle>Interactive Story Game</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p>{latestStorySegment}</p> {/* Display only the latest story segment */}
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <>
-            {choices.map((choice, index) => (
-              <Button key={index} onClick={() => handleChoice(choice)}>
-                {choice.short_description}
-              </Button>
-            ))}
-            <Button onClick={handleEndGame}>End Game</Button>
-          </>
-        )}
-      </CardContent>
+      <CardContent className="story-container">
+      <p className="story-segment">{latestStorySegment}</p> 
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {choices.map((choice, index) => (
+            <Button key={index} className="choice-button" onClick={() => handleChoice(choice)}>
+              {choice.short_description}
+            </Button>
+          ))}
+          <Button className="button-game-over" onClick={handleEndGame}>End Game</Button>
+        </>
+      )}
+    </CardContent>
     </Card>
   );
 };
