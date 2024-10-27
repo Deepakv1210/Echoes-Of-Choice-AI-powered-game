@@ -42,7 +42,7 @@ def flush():
     torch.cuda.empty_cache()
 
 with torch.no_grad():
-    prompt = "You find yourself at the entrance of a dark cave."
+    prompt = "The beam of light dances across the rough stone walls, casting eerie shadows that seem to writhe on the ground like living things. The air is heavy with the scent of damp earth and decay, making you wrinkle your nose in distaste. As you follow the tunnel, it begins to slope downward, leading you deeper into the depths of the cave."
     prompt_embeds, prompt_attention_mask, negative_embeds, negative_prompt_attention_mask = pipe.encode_prompt(prompt)
 
 del text_encoder
@@ -71,4 +71,4 @@ with torch.no_grad():
     image = pipe.vae.decode(latents / pipe.vae.config.scaling_factor, return_dict=False)[0]
 image = pipe.image_processor.postprocess(image, output_type="pil")
 
-image[0].save("cave.png")
+image[0].save("seg.png")
