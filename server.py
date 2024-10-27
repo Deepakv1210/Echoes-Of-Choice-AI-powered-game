@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import ollama
 import re
-
-app = Flask(__name__)
+from text_to_img_fun import generate_image_from_text 
+app = Flask(__name__,static_folder='static')
 CORS(app)  # Enable CORS
 
 # Load the Ollama model
@@ -12,6 +12,11 @@ try:
     print("Model loaded successfully.")
 except Exception as e:
     print(f"Error loading model: {e}")
+
+# @app.route('/static/test.png')
+# def serve_static(filename):
+#     return send_from_directory('static', filename)
+
 @app.route('/generate', methods=['POST'])
 def generate():
     data = request.json
@@ -64,6 +69,23 @@ Choices:
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"new_story": story_text, "new_choices": new_choices})
+
+@app.route('/generate_image', methods=['POST'])
+def generate_image():
+    data = request.json
+    story_segment = data.get('text')
+
+    try:
+        # Generate image from text using the function from txt_to_img.py
+        image_path = generate_image_from_text(story_segment)
+
+        # Assume the image is saved locally and return its path
+        print("Image generated successfully.", image_path)
+        return jsonify({'image_url': image_path})
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 def extract_choices(response_text):
     """
