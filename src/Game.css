@@ -127,42 +127,6 @@ body {
   flex-direction: column;
   align-items: center;
 }
-
-/* 
-Styling the choice buttons
-.choice-button {
-  background-color: #3f51b5;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  font-size: 1rem;
-  margin: 0.5rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s, background-color 0.3s ease;
-}
-
-.choice-button:hover {
-  transform: scale(1.05);
-  background-color: #5c6bc0;
-}
-
-Game Over button styling 
-  background-color: #ff6f61;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-top: 2rem;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.button-game-over:hover {
-  background-color: #ff7961;
-  transform: scale(1.1);
-} */
 /* Game Over screen styling */
 .game-over-container {
   background-color: white; /* White background for Game Over report */
@@ -180,6 +144,43 @@ Game Over button styling
   transition: opacity 0.5s ease-in-out;
   opacity: 0;
   animation: fadeInContent 0.8s ease forwards;
+}
+
+.front-screen {
+  background-image: url('/public/f1.png'); /* Use your initial background image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh; /* Full height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.front-title-box {
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.front-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.front-description {
+  font-size: 1.2rem;
+  margin: 20px 0;
+}
+
+.start-button {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  padding: 12px 24px;
 }
 
 /* Keyframe for content fade-in */
