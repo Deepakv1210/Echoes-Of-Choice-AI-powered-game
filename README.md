@@ -23,4 +23,5 @@ This project generates personalized game narratives in real-time based on player
 
 ## Sample Outputs
 <img width="1245" alt="proj_bg" src="https://github.com/user-attachments/assets/77c004d5-1fbe-4177-952d-cf915115ce79">
+---
 <img width="1095" alt="image" src="https://github.com/user-attachments/assets/06f1e7cf-75ef-4a7f-8f5e-adf09f6a6136">
