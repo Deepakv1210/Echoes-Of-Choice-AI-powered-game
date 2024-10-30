@@ -2,10 +2,13 @@
 
 This project generates personalized game narratives in real-time based on player behavior and decisions, enhancing engagement through dynamic story paths and multiple possible endings.
 
+**⚠️ Note: This project is still currently under development...**
+
 ## Project Structure
 
-- **Backend**: Python (with a virtual environment for managing dependencies)
+- **Backend**: Flask (Python with a virtual environment for managing dependencies)
 - **Frontend**: React (JavaScript, CSS)
+- **LLM**: Llama3.2 (Ollama)
 - **Dependencies**:
   - Python packages (listed in `requirements.txt`)
   - JavaScript packages (listed in `package.json`)
@@ -18,5 +21,5 @@ This project generates personalized game narratives in real-time based on player
 - **Text-to-Image Generation:** Background images are dynamically generated based on the story segments.
 - **Real-time Decision Feedback:** Players receive feedback on their decision speed and style upon completing the game.
 
-## Sample
+## Sample Outputs
 <img width="1245" alt="proj_bg" src="https://github.com/user-attachments/assets/77c004d5-1fbe-4177-952d-cf915115ce79">
