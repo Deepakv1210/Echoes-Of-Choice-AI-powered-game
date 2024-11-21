@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Interactive Chat with Assistant</h1>
+        <div id="chat-container" class="mt-4">
+            <div id="messages" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+                <p><strong>Assistant:</strong> Click "Start" to begin the conversation.</p>
+            </div>
+            <input type="text" id="user-input" class="form-control mt-3" placeholder="Enter your choice...">
+            <button class="btn btn-primary mt-2" id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let threadId = null;
+
+        async function startConversation() {
+            const response = await axios.post('/start');
+            threadId = response.data.thread_id;
+
+            const initialMessage = {
+                user_input: "Start",
+                thread_id: threadId
+            };
+
+            const assistantResponse = await getResponse(initialMessage);
+            displayMessage("Assistant", assistantResponse);
+        }
+
+        async function getResponse(data) {
+            const response = await axios.post('/response', data);
+            return response.data.assistant_response;
+        }
+
+        function displayMessage(sender, message) {
+            const messagesContainer = document.getElementById('messages');
+            const messageElement = document.createElement('p');
+            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        document.getElementById('send-button').addEventListener('click', async () => {
+            const userInput = document.getElementById('user-input').value.trim();
+            if (!userInput) return;
+
+            displayMessage("You", userInput);
+
+            const data = {
+                thread_id: threadId,
+                user_input: userInput
+            };
+
+            const assistantResponse = await getResponse(data);
+            displayMessage("Assistant", assistantResponse);
+
+            document.getElementById('user-input').value = '';
+        });
+
+        // Start the conversation on page load
+        window.onload = startConversation;
+    </script>
+</body>
+</html>

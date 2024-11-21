@@ -34,6 +34,9 @@ def get_response():
     message_response = client.beta.threads.messages.list(thread_id=thread.id)
     messages = message_response.data
     latest_message = messages[0]
+
+        # Debugging statements
+
     return latest_message.content[0].text.value
 
 # Initial response
